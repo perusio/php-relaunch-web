@@ -70,6 +70,14 @@ function relaunch_php() {
     done
 }
 
+function max() {
+    if [ $1 -gt $2 ]; then
+        $1
+    else
+        $2
+    fi
+}
+
 ## The cURL program.
 CURL_PROG=$(which curl)
 [ -x $CURL_PROG ] || exit 0
@@ -118,7 +126,7 @@ for i in $(seq 1 $INTERVAL); do
             echo $LOG_LINE | $TS >> $LOG_FILE
             ## Send an email only if the address is a non null string.
             [ -n "$3" ] && (echo $LOG_LINE | $TS | $MAILX -s 'PHP restart' "$3")
-            sleep $RESPONSE_TIMEOUT # give some time to normalize things
+            sleep $(max $RESPONSE_TIMEOUT 10)  # give some time to normalize things
             ;;
         200)
             ## Sleep for some time based on the request duration and the
