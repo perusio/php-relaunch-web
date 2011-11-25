@@ -118,14 +118,13 @@ for i in $(seq 1 $INTERVAL); do
             echo $LOG_LINE | $TS >> $LOG_FILE
             ## Send an email only if the address is a non null string.
             [ -n "$3" ] && (echo $LOG_LINE | $TS | $MAILX -s 'PHP restart' "$3")
-            break
+            sleep $RESPONSE_TIMEOUT # give some time to normalize things
             ;;
         200)
             ## Sleep for some time based on the request duration and the
             ## specified response timeout.
             SLEEP_VALUE=$((RESPONSE_TIMEOUT - TS_END_REQUEST + TS_BEGIN_REQUEST))
             [ $SLEEP_VALUE -gt 0 ] && sleep $SLEEP_VALUE
-            break
             ;;
     esac
 done
