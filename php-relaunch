@@ -61,7 +61,6 @@ function relaunch_php() {
     while ($PGREP $1 &>/dev/null); do
         $PKILL -9 $1
     done
-    ## If the process didn't start try to launch it again.
     LAUNCH_ATTEMPS=0 # php-fpm
     ## If the process didn't start try to relaunch it successively.
     while [ $LAUNCH_ATTEMPS -lt $MAX_LAUNCH_ATTEMPTS ]; do
@@ -112,12 +111,12 @@ for i in $(seq 1 $INTERVAL); do
         500|502|503|504|"")
             ## PHP is dead, kill and restart it.
             relaunch_php $PHP_FPM_NAME # php-fpm
-            ## Restart php-cgi only if there's a third argument.
+            ## Restart php-cgi only if there's a fourth argument.
             if [ $# -eq 4 ]; then
                 ## The php-cgi program.
                 PHP_CGI=/usr/bin/php5-cgi
                 [ -x $PHP_CGI ] || exit 0
-                ## Get the php-cgi program.
+                ## Get the php-cgi program name.
                 PHP_CGI_NAME=$(basename $PHP_CGI)
                 relaunch_php $PHP_CGI_NAME # php-cgi
             fi
