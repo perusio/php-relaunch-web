@@ -1,0 +1,129 @@
+#!/bin/bash
+
+# php-relaunch --- A script that verifies if the PHP is behaving
+# properly and restarts it if needed.
+
+# Copyright (C) 2011 António P. P. Almeida <appa@perusio.net>
+
+# Author: António P. P. Almeida <appa@perusio.net>
+
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+
+# Except as contained in this notice, the name(s) of the above copyright
+# holders shall not be used in advertising or otherwise to promote the sale,
+# use or other dealings in this Software without prior written authorization.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+
+SCRIPTNAME=${0##*/}
+
+## Check the number of arguments.
+[ $# -lt 3 ] && echo "Usage: $SCRIPTNAME <URI> <response timeout> <email address> [restart CGI]" && exit 1
+
+## The number of maximum launch attempts if the first try fails.
+MAX_LAUNCH_ATTEMPTS=10
+
+## The php5-fpm program.
+PHP_FPM=/usr/sbin/php5-fpm
+[ -x $PHP_FPM ] || exit 0
+
+## Get the php-fpm program name.
+PHP_FPM_NAME=$(basename $PHP_FPM)
+
+## The pkill program.
+PKILL=$(which pkill)
+[ -x $PKILL ] || exit 0
+
+## The PGREP program.
+PGREP=$(which pgrep)
+[ -x $PGREP ] || exit 0
+
+SERVICE=/usr/sbin/service
+[ -x $SERVICE ] || exit 0
+
+## Relaunch the PHP process.
+function relaunch_php() {
+    ## Kill the php-fpm process.
+    while ($PGREP $1 &>/dev/null); do
+        $PKILL -9 $1
+    done
+    ## If the process didn't start try to launch it again.
+    LAUNCH_ATTEMPS=0 # php-fpm
+    ## If the process didn't start try to relaunch it successively.
+    while [ $LAUNCH_ATTEMPS -lt $MAX_LAUNCH_ATTEMPTS ]; do
+        $SERVICE $1 start
+        LAUNCH_ATTEMPS=$((LAUNCH_ATTEMPS + 1))
+    done
+}
+
+## The cURL program.
+CURL_PROG=$(which curl)
+[ -x $CURL_PROG ] || exit 0
+
+## Mail utility.
+MAILX=$(which mailx)
+[ -x $MAILX ] || exit 0
+
+## Log file.
+LOG_FILE=/tmp/php_relaunch.log
+
+## Get a timestamp using ts from the moreutils package.
+TS=$(which ts)
+[ -x $TS ] || exit 0
+
+## Response timeout in seconds.
+RESPONSE_TIMEOUT=$2
+
+## Perform the request and check the response.
+TS_BEGIN_REQUEST=$(echo | $TS '%s')
+STATUS_CODE=$($CURL_PROG -I -s -m $RESPONSE_TIMEOUT $1 | sed -n '/^HTTP\/1\.1/p' | awk '{print $2}')
+TS_END_REQUEST=$(echo | $TS '%s')
+
+## Get the number of time intervals. Since cron runs every minute 60
+## (seconds) is the dividend.
+INTERVAL=$((60 / RESPONSE_TIMEOUT))
+
+## Looping over the number of divisions in a minute.
+for i in $(seq 1 $INTERVAL); do
+    ## Acting on the HTTP status code returned.
+    case $STATUS_CODE in
+        500|502|503|504|"")
+            ## PHP is dead, kill and restart it.
+            relaunch_php $PHP_FPM_NAME # php-fpm
+            ## Restart php-cgi only if there's a third argument.
+            if [ $# -eq 4 ]; then
+                ## The php-cgi program.
+                PHP_CGI=/usr/bin/php5-cgi
+                [ -x $PHP_CGI ] || exit 0
+                ## Get the php-cgi program.
+                PHP_CGI_NAME=$(basename $PHP_CGI)
+                relaunch_php $PHP_CGI_NAME # php-cgi
+            fi
+            ## Log the restart and send an alert.
+            LOG_LINE="$(hostname) PHP restarted."
+            echo $LOG_LINE | $TS >> $LOG_FILE
+            ## Send an email only if the address is a non null string.
+            [ -n "$3" ] && (echo $LOG_LINE | $TS | $MAILX -s 'PHP restart' "$3")
+            ;;
+        200)
+            ## Sleep for some time based on the request duration and the
+            ## specified response timeout.
+            SLEEP_VALUE=$((RESPONSE_TIMEOUT - TS_END_REQUEST + TS_BEGIN_REQUEST))
+            [ $SLEEP_VALUE -gt 0 ] && sleep $SLEEP_VALUE
+            ;;
+    esac
+done
