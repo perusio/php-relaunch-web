@@ -88,17 +88,17 @@ TS=$(which ts)
 ## Response timeout in seconds.
 RESPONSE_TIMEOUT=$2
 
-## Perform the request and check the response.
-TS_BEGIN_REQUEST=$(echo | $TS '%s')
-STATUS_CODE=$($CURL_PROG -I -s -m $RESPONSE_TIMEOUT $1 | sed -n '/^HTTP\/1\.1/p' | awk '{print $2}')
-TS_END_REQUEST=$(echo | $TS '%s')
-
 ## Get the number of time intervals. Since cron runs every minute 60
 ## (seconds) is the dividend.
 INTERVAL=$((60 / RESPONSE_TIMEOUT))
 
 ## Looping over the number of divisions in a minute.
 for i in $(seq 1 $INTERVAL); do
+    ## Perform the request and check the response.
+    TS_BEGIN_REQUEST=$(echo | $TS '%s')
+    STATUS_CODE=$($CURL_PROG -I -s -m $RESPONSE_TIMEOUT $1 | sed -n '/^HTTP\/1\.1/p' | awk '{print $2}')
+    TS_END_REQUEST=$(echo | $TS '%s')
+
     ## Acting on the HTTP status code returned.
     case $STATUS_CODE in
         500|502|503|504|"")
