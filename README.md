@@ -19,9 +19,9 @@ The script works by requesting every **n** seconds a very simple
 
 ## Installation
 
- 1. Clone the [repo](git://github.com/perusio/php-relaunch-web.git).
+ 1. Clone the [repo](https://github.com/perusio/php-relaunch-web.git).
 
- 2. Clone the [PHP page](git://github.com/perusio/php-heartbeat.git).
+ 2. Clone the [PHP page](https://github.com/perusio/php-heartbeat.git).
 
  3. Configure your server for supporting this script. Here's an example
     [Nginx](http://wiki.nginx.org) config:
