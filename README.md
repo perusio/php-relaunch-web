@@ -51,18 +51,17 @@ The script works by requesting every **n** seconds a very simple
                access_log off;
                fastcgi_pass phpcgi;
            }
-
         } # server
      
  5. Is **your** responsability to restrict this host to be accessed
     on the loopback or LAN. You can use something like this:
-        <pre>
-        geo $heartbeat\_not\_allowed {
-            default 1;
-            127.0.0.1 0;
-            192.168.65.0/24 0;
-        } 
-        </pre>
+    <pre>
+    geo $heartbeat_not_allowed {
+        default 1;
+        127.0.0.1 0;
+        192.168.65.0/24 0;
+    } 
+    </pre>
  6. Install the script in the `crontab` of `root`:
      
     `* * * * * /path/to/php-relaunch http://heartbeat.no-ip:8889/php-heartbeat.html 5 'some@address.com' &>/dev/null`
@@ -73,8 +72,8 @@ The script works by requesting every **n** seconds a very simple
     just pass the empty string "" as address, a log is always recorded
     in `/tmp/php_relaunch.log`.
     
- 6. If you're running php-cgi as a fallback to php-fpm then pass an
-    additional argument to the script. The above crontab entry would
+ 6. If you're running `php-cgi` as a fallback to `php-fpm` then pass an
+    additional argument to the script. The above `crontab` entry would
     be:
        
     `* * * * * /path/to/php-relaunch http://heartbeat.no-ip:8889/php-heartbeat.html 5 'some@address.com' 1 &>/dev/null`
