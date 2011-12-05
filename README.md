@@ -14,7 +14,7 @@ your site.
 
 The script works by requesting every **n** seconds a very simple
 [PHP page](https://github.com/perusio/php-heartbeat) that just prints
-**two** variables: `$_SERVER['HTTP_HOST]` and
+**two** variables: `$_SERVER['HTTP_HOST']` and
 `$_SERVER['SERVER_ADDR']`.
 
 ## Installation
