@@ -121,11 +121,10 @@ for i in $(seq 1 $INTERVAL); do
                 relaunch_php $PHP_CGI_NAME # php-cgi
             fi
             ## Log the restart and send an alert.
-            FQDN_HOSTNAME=$(hostname -f)
-            LOG_LINE="$FQDN_HOSTNAME $STATUS_CODE PHP restarted."
+            LOG_LINE="$HOSTNAME $STATUS_CODE PHP restarted."
             echo $LOG_LINE | $TS >> $LOG_FILE
             ## Send an email only if the address is a non null string.
-            [ -n "$3" ] && (echo $LOG_LINE | $TS | $MAILX -s "$FQDN_HOSTNAME PHP restart" "$3")
+            [ -n "$3" ] && (echo $LOG_LINE | $TS | $MAILX -s "$HOSTNAME PHP restart" "$3")
             sleep $(max $RESPONSE_TIMEOUT 10)  # give some time to normalize things
             ;;
         200)
