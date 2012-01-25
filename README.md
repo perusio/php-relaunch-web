@@ -47,7 +47,7 @@ The script works by requesting every **n** seconds a very simple
            }
 
            ## The PHP heartbeat.
-           location = /php-heartbeat.html {
+           location = /php-heartbeat.php {
                access_log off;
                fastcgi_pass phpcgi;
            }
