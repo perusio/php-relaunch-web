@@ -76,6 +76,6 @@ The script works by requesting every **n** seconds a very simple
     additional argument to the script. The above `crontab` entry would
     be:
        
-    `* * * * * /path/to/php-relaunch http://heartbeat.no-ip:8889/php-heartbeat.html 5 'some@address.com' 1 &>/dev/null`
+    `* * * * * /path/to/php-relaunch http://heartbeat.no-ip:8889/php-heartbeat.php 5 'some@address.com' 1 &>/dev/null`
  
  7. Done.
