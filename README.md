@@ -64,7 +64,7 @@ The script works by requesting every **n** seconds a very simple
     </pre>
  6. Install the script in the `crontab` of `root`:
      
-    `* * * * * /path/to/php-relaunch http://heartbeat.no-ip:8889/php-heartbeat.html 5 'some@address.com' &>/dev/null`
+    `* * * * * /path/to/php-relaunch http://heartbeat.no-ip:8889/php-heartbeat.php 5 'some@address.com' &>/dev/null`
     
     This sets a timeout of **5** seconds when requesting the above
     test page. If a restart happens then email an alert to
