@@ -27,7 +27,8 @@ The script works by requesting every **n** seconds a very simple
     [Nginx](http://wiki.nginx.org) config:
                
         server {
-           listen [::]:8889;
+           listen 127.0.0.0.1:8889; # IPv4 loopback bound
+           listen [::1]:8889 ipv6only=on; # IPv6 loopback bound
            server_name heartbeat-no-ip;
 
            access_log /var/log/nginx/heartbeat.access.log;
@@ -79,3 +80,7 @@ The script works by requesting every **n** seconds a very simple
     `* * * * * /path/to/php-relaunch http://heartbeat.no-ip:8889/php-heartbeat.php 5 'some@address.com' 1 &>/dev/null`
  
  7. Done.
+
+## TODO
+
+ + Add a **simplified** version to work with [mcron](www.gnu.org/software/mcron/).
