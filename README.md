@@ -29,7 +29,7 @@ The script works by requesting every **n** seconds a very simple
         server {
            listen 127.0.0.1:8889; # IPv4 loopback bound
            listen [::1]:8889 ipv6only=on; # IPv6 loopback bound
-           server_name heartbeat-no-ip;
+           server_name heartbeat.no-ip;
 
            access_log /var/log/nginx/heartbeat.access.log;
            error_log /var/log/nginx/heartbeat.error.log;
