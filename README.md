@@ -27,7 +27,7 @@ The script works by requesting every **n** seconds a very simple
     [Nginx](http://wiki.nginx.org) config:
                
         server {
-           listen 127.0.0.0.1:8889; # IPv4 loopback bound
+           listen 127.0.0.1:8889; # IPv4 loopback bound
            listen [::1]:8889 ipv6only=on; # IPv6 loopback bound
            server_name heartbeat-no-ip;
 
