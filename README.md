@@ -83,4 +83,4 @@ The script works by requesting every **n** seconds a very simple
 
 ## TODO
 
- + Add a **simplified** version to work with [mcron](www.gnu.org/software/mcron/).
+ + Add a **simplified** version to work with [mcron](http://www.gnu.org/software/mcron/).
