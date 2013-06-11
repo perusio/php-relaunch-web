@@ -117,8 +117,7 @@ Here's the full crontab line:
     
 # TODO
 
- + Add a **simplified** version to work with
-   [mcron](www.gnu.org/software/mcron/).
+ + Add a **simplified** version to work with [mcron](http://www.gnu.org/software/mcron/).
    
  + Add a FreeBSD oriented setup. Pull requests very much welcomed.  
-   
+
