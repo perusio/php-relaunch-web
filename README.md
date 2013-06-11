@@ -17,13 +17,32 @@ The script works by requesting every **n** seconds a very simple
 **two** variables: `$_SERVER['HTTP_HOST']` and
 `$_SERVER['SERVER_ADDR']`.
 
+## Requirements 
+
+The script included requires the following:
+
+ + `ts` utility included on the debian [moreutils]() package.
+ 
+ + `flock` included in the debian [util-linux]() package.
+
+ + `curl` command line HTTP client.
+ 
+ + `service` script included on the debian [sysvinit-utils]() package.
+ 
+ + `pgrep` included on the debian [procps]() package.
+
+If any of the above is not present the script will **fail**.
+
 ## Installation
 
  1. Clone the [repo](https://github.com/perusio/php-relaunch-web.git).
 
  2. Clone the [PHP page](https://github.com/perusio/php-heartbeat.git).
 
- 3. Configure your server for supporting this script. Here's an example
+ 3. Configure your server for supporting this script. In the `nginx`
+    directory a suggested configuration is given. The vhost
+    configuration is: 
+
     [Nginx](http://wiki.nginx.org) config:
                
         server {
@@ -54,8 +73,11 @@ The script works by requesting every **n** seconds a very simple
            }
         } # server
      
- 5. Is **your** responsability to restrict this host to be accessed
-    on the loopback or LAN. You can use something like this:
+ 4. Is **your** responsability to restrict this host to be
+    accessed. In the `nginx` directory there's a
+    `heartbeat_allowed.conf` file that should be included at the
+    `http` level of your nginx configuration. It restricts
+     the hearbeat access to the loopback or LAN.
     <pre>
     geo $heartbeat_not_allowed {
         default 1;
@@ -65,10 +87,7 @@ The script works by requesting every **n** seconds a very simple
     } 
     </pre>
     
- 6. There's an example configuration on the `nginx` directory. Adapt
-    it to your case.
-    
- 7. Install the script in the `crontab` of `root`:
+ 5. Install the script in the `crontab` of `root`:
      
     `* * * * * /path/to/php-relaunch http://heartbeat.no-ip:8889/php-heartbeat.php 5 'some@address.com' &>/dev/null`
     
@@ -86,8 +105,7 @@ The script works by requesting every **n** seconds a very simple
  
  7. Done.
 
- 
-Note that you can have multiple email addresses. Just add them between
+Note that you can have **multiple** email addresses. Just add them between
 quotes, separated by a comma, for **two** addresses:
 
     "some@address1.com,another@address2.com"
@@ -99,4 +117,8 @@ Here's the full crontab line:
     
 # TODO
 
- + Add a **simplified** version to work with [mcron](www.gnu.org/software/mcron/).
+ + Add a **simplified** version to work with
+   [mcron](www.gnu.org/software/mcron/).
+   
+ + Add a FreeBSD oriented setup. Pull requests very much welcomed.  
+   
