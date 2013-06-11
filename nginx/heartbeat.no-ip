@@ -1,0 +1,29 @@
+# -*- mode: nginx; mode: flyspell-prog;  ispell-local-dictionary: "american" -*-
+server {
+    listen 127.0.0.1:8889; # IPv4 loopback bound
+    listen [::1]:8889 ipv6only=on; # IPv6 loopback bound
+    server_name heartbeat.no-ip;
+
+    access_log /var/log/nginx/heartbeat.access.log;
+    error_log /var/log/nginx/heartbeat.error.log;
+
+    ## If the hearbeat is not allowed close the connection.
+    if ($heartbeat_not_allowed) {
+        return 444;
+    }
+
+    root /home/perusio/sites;
+    index index.php;
+
+    ## The catch all location.
+    location / {
+        empty_gif;
+    }
+
+    ## The PHP heartbeat.
+    location = /php-heartbeat.php {
+        access_log off;
+        fastcgi_pass phpcgi;
+    }
+
+} # server

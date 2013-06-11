@@ -60,10 +60,15 @@ The script works by requesting every **n** seconds a very simple
     geo $heartbeat_not_allowed {
         default 1;
         127.0.0.1 0;
+        ::1 0;
         192.168.65.0/24 0;
     } 
     </pre>
- 6. Install the script in the `crontab` of `root`:
+    
+ 6. There's an example configuration on the `nginx` directory. Adapt
+    it to your case.
+    
+ 7. Install the script in the `crontab` of `root`:
      
     `* * * * * /path/to/php-relaunch http://heartbeat.no-ip:8889/php-heartbeat.php 5 'some@address.com' &>/dev/null`
     
@@ -81,6 +86,17 @@ The script works by requesting every **n** seconds a very simple
  
  7. Done.
 
-## TODO
+ 
+Note that you can have multiple email addresses. Just add them between
+quotes, separated by a comma, for **two** addresses:
+
+    "some@address1.com,another@address2.com"
+    
+Here's the full crontab line:
+
+    `* * * * * /path/to/php-relaunch
+    http://heartbeat.no-ip:8889/php-heartbeat.php 5 'some@address.com,someoneelse@otheraddress.com' &>/dev/null`
+    
+# TODO
 
  + Add a **simplified** version to work with [mcron](www.gnu.org/software/mcron/).
