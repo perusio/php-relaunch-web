@@ -33,7 +33,11 @@ SCRIPTNAME=${0##*/}
 
 ## The lock to be used for avoiding multiple launches.
 if [ $(id -u) -eq 0 ]; then
-    LOCKFILE=/var/run/lock/$SCRIPTNAME.lock
+    if [ -d /var/run/lock/ ]; then
+        LOCKFILE=/var/run/lock/$SCRIPTNAME.lock
+    elif [ -d /var/lock/ ]; then
+        LOCKFILE=/var/lock/$SCRIPTNAME.lock
+    fi
 else
     LOCKFILE=/tmp/$SCRIPTNAME.lock
 fi
