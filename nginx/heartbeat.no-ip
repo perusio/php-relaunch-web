@@ -14,7 +14,7 @@ server {
         return 444;
     }
 
-    root /home/perusio/sites/php-hearbeat;
+    root /home/perusio/sites/php-heartbeat;
     index index.php;
 
     ## The catch all location.
