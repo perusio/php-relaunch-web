@@ -1,7 +1,9 @@
 # -*- mode: nginx; mode: flyspell-prog;  ispell-local-dictionary: "american" -*-
 server {
+
     listen 127.0.0.1:8889; # IPv4 loopback bound
     listen [::1]:8889 ipv6only=on; # IPv6 loopback bound
+
     server_name heartbeat.no-ip;
 
     access_log /var/log/nginx/heartbeat.access.log;
@@ -12,7 +14,7 @@ server {
         return 444;
     }
 
-    root /home/perusio/sites;
+    root /home/perusio/sites/php-hearbeat;
     index index.php;
 
     ## The catch all location.

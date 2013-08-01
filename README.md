@@ -73,16 +73,18 @@ If any of the above is not present the script will **fail**.
            }
         } # server
      
- 4. Is **your** responsability to restrict this host to be
-    accessed. In the `nginx` directory there's a
-    `heartbeat_allowed.conf` file that should be included at the
-    `http` level of your nginx configuration. It restricts
-     the hearbeat access to the loopback or LAN.
+ 4. Is **your** responsability to restrict access to this host.  In
+    the `nginx` directory there's a `heartbeat_allowed.conf` file that
+    should be included at the `http` level of your nginx
+    configuration. It restricts the hearbeat access to the loopback 
+    or/and a (V)LAN. Here's an example with the loopback and a IPv4
+    and IPv6 VLAN: 
     <pre>
     geo $heartbeat_not_allowed {
         default 1;
         127.0.0.1 0;
         ::1 0;
+        fd0c:b7ed:0666:33a3::/64 0;
         192.168.65.0/24 0;
     } 
     </pre>
