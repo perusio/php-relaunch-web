@@ -47,26 +47,22 @@ exec 8>$LOCKFILE
 ## The number of maximum launch attempts if the first try fails.
 MAX_LAUNCH_ATTEMPTS=10
 
-## The php5-fpm program.
-PHP_FPM=/usr/sbin/php5-fpm
-[ -x $PHP_FPM ] || exit 0
+## The php-fpm program.
+PHP_FPM=$(command -v php5-fpm || command -v php-fpm || exit 0)
 
 ## Get the php-fpm program name.
 PHP_FPM_NAME=$(basename $PHP_FPM)
 
 ## The pkill program.
-PKILL=$(which pkill)
-[ -x $PKILL ] || exit 0
+PKILL=$(command -v pkill || exit 0)
 
 ## The PGREP program.
-PGREP=$(which pgrep)
+PGREP=$(command -v pgrep || exit 0)
 [ -x $PGREP ] || exit 0
 
-SERVICE=/usr/sbin/service
-[ -x $SERVICE ] || exit 0
+SERVICE=$(command -v service || exit 0)
 
-FLOCK=$(which flock)
-[ -x $FLOCK ] || exit 0
+FLOCK=$(command -v flock || exit 0)
 
 ## Relaunch the PHP process.
 function relaunch_php() {
@@ -97,19 +93,16 @@ function max() {
 }
 
 ## The cURL program.
-CURL_PROG=$(which curl)
-[ -x $CURL_PROG ] || exit 0
+CURL_PROG=$(command -v curl || exit 0)
 
 ## Mail utility.
-MAILX=$(which mailx)
-[ -x $MAILX ] || exit 0
+MAILX=$(command -v mailx || exit 0)
 
 ## Log file.
 LOG_FILE=/tmp/php-relaunch.log
 
 ## Get a timestamp using ts from the moreutils package.
-TS=$(which ts)
-[ -x $TS ] || exit 0
+TS=$(command -v ts || exit 0)
 
 ## Response timeout in seconds.
 RESPONSE_TIMEOUT=$2
