@@ -90,9 +90,9 @@ function relaunch_php() {
 
 function max() {
     if [ $1 -gt $2 ]; then
-        $1
+        echo $1
     else
-        $2
+        echo $2
     fi
 }
 
@@ -134,8 +134,7 @@ if $FLOCK -n 8; then
                 ## Restart php-cgi only if there's a fourth argument.
                 if [ $# -eq 4 ]; then
                     ## The php-cgi program.
-                    PHP_CGI=/usr/bin/php5-cgi
-                    [ -x $PHP_CGI ] || exit 0
+                    PHP_CGI=$(command -v php5-cgi || command -v php-cgi || exit 0)
                     ## Get the php-cgi program name.
                     PHP_CGI_NAME=$(basename $PHP_CGI)
                     relaunch_php $PHP_CGI_NAME # php-cgi
