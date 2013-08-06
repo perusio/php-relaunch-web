@@ -30,6 +30,9 @@ The script included requires the following:
  + `service` script included on the debian [sysvinit-utils]() package.
  
  + `pgrep` included on the debian [procps]() package.
+ 
+ + [`mcron`](http://www.gnu.org/software/mcron/) if you want a
+   **high** precision cron (second granularity).
 
 If any of the above is not present the script will **fail**.
 
