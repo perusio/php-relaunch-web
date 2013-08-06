@@ -116,10 +116,74 @@ Here's the full crontab line:
 
     `* * * * * /path/to/php-relaunch
     http://heartbeat.no-ip:8889/php-heartbeat.php 5 'some@address.com,someoneelse@otheraddress.com' &>/dev/null`
-    
-# TODO
+ 
+## Using mcron
 
- + Add a **simplified** version to work with [mcron](http://www.gnu.org/software/mcron/).
+[`mcron`](http://www.gnu.org/software/mcron/) is a high-precision job
+scheduler. It's to be preferred to `cron` &mdash; aka Vixie's cron
+&mdash; whenever there's the need for executing jobs in the
+**seconds** range.
+
+`mcron` is written in [Guile](), a dialect of Scheme, and the
+preferred way of configuring it. There's a Vixie's cron compatible
+configuration, but using it you cannot specify complex execution
+conditions or second level timings. Hence here we use a Guile (Scheme)
+job specification. Here are the things to bear in mind when using
+`mcron`:
+
+ + `mcron` is run for **each** user, so we need to launch it in 
+   **daemon** mode.
+
+ + It relies on a `~/.cron` directory where there's a `job.guile` file
+   specifying all jobs.
    
+ + Since in order to restart `php-fpm` we need to be root, `mcron`
+   must be run as **root**.
+   
+Here's the howto for running the `php-relaunch` script using `mcron`: 
+
+ 1. Repeats steps 1 to 4 of the Installation procedure above:
+ 
+ 2. Create a `/root/.cron` directory.
+ 
+ 3. Create a file `job.guile` in the `/root/.cron` directory and add
+    the Guile code: 
+    
+        (job '(next-second (range 0 60 10)) "/path/to/php-relaunch http://heartbeat.no-ip:8889/php-heartbeat.php 5 'some@address.com' &>/dev/null")
+ 
+    This means that the job will execute **every 10 seconds**. Which
+    makes sense given that we passed as argument to `php-relaunch` a
+    value of **5** seconds as the threshold for considering when PHP
+    is unresponsive.   
+ 
+ 4. Launch `mcron` in daemon mode as root:
+    
+        mcron -d
+ 
+ 5. Done. 
+ 
+In the `mcron` directory there's an example `job.guile` use it for
+creating your own. Adapt the path to `php-relaunch`, to the URI of the
+PHP heartbeat page, threshold for considering PHP unresponsive and the
+email address(es) to be notified when a relaunch occurs.p
+ 
+## mcron with Vixie's cron as a fallback
+ 
+We can setup **both** types of cron utilities: try to use `mcron`
+first and fallback on Vixie's cron in case it's not running.
+ 
+For that we configure **both** `mcron` and `cron`. The only thing we
+need to change is the crontab line to:
+ 
+    `* * * * * pgrep mcron || (/path/to/php-relaunch http://heartbeat.no-ip:8889/php-heartbeat.php 5 'some@address.com' &>/dev/null`)
+ 
+or for multiple email addresses being notified: 
+ 
+    `* * * * * pgrep mcron || (/path/to/php-relaunch http://heartbeat.no-ip:8889/php-heartbeat.php 5 'some@address.com,someoneelse@otheraddress.com' &>/dev/null`)     
+ 
+ Now whenever mcron is not running we launch `php-relaunch` every minute. 
+ 
+## TODO
+
  + Add a FreeBSD oriented setup. Pull requests very much welcomed.  
 

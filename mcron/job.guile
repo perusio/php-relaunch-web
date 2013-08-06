@@ -1,0 +1,2 @@
+;;; This is the example mcron job specification file. Adapt to your setup.
+(job '(next-second (range 0 60 10)) "/path/to/php-relaunch http://heartbeat.no-ip:8889/php-heartbeat.php 5 'some@address.com,another@someplace.com' &>/dev/null")
